@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>配料营养成分计算</title>
+
+  <!-- Bootstrap 本地 -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='vendor/bootstrap-5.3.5-dist/css/bootstrap.min.css') }}"
+  >
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<meta name="theme-color" content="#4CAF50">
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-pap…(略)…"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    body { font-size: 0.875rem; background: #f8f9fa; }
+    h1,h4 { font-weight: 600; }
+    .card-header h4 { margin: 0; }
+    .table thead th { vertical-align: middle; font-size: 0.8rem; white-space: nowrap; }
+    .table td { font-size: 0.85rem; }
+    #btn-save { margin-top: 1.5rem; }
+    #summary-metrics .card { border: none; background: #fff; text-align: center; }
+    #summary-metrics .card i { font-size: 2rem; }
+    #summary-metrics .card p { font-size: 1.25rem; margin: .5rem 0 0; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="container py-4">
+
+    <!-- 顶部：菜名 + 保存 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="flex-grow-1 me-3">
+        <label for="dish-name" class="form-label">菜名</label>
+        <input type="text" id="dish-name" class="form-control" placeholder="为本次配方取个名字">
+      </div>
+      <button class="btn btn-outline-primary align-self-end" id="btn-save">
+        保存菜谱
+      </button>
+    </div>
+
+    <!-- 配料输入 -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-white">
+        <h4 class="mb-0">配料营养成分计算</h4>
+      </div>
+      <div class="card-body">
+        <form id="form-ingredients" class="row g-3 align-items-end">
+          <div class="col-md-5">
+            <label for="food-name" class="form-label">食材名称</label>
+            <input
+              type="text"
+              class="form-control"
+              id="food-name"
+              placeholder="请输入食材"
+              list="food-list"
+              autocomplete="off"
+            >
+            <datalist id="food-list"></datalist>
+          </div>
+          <div class="col-md-3">
+            <label for="food-qty" class="form-label">重量 (克)</label>
+            <input type="number" class="form-control" id="food-qty" placeholder="如：150">
+          </div>
+          <div class="col-md-2">
+            <button type="button" id="btn-add" class="btn btn-primary w-100">
+              添加食材
+            </button>
+          </div>
+          <div class="col-md-2 text-end">
+            <button type="button" id="btn-calc" class="btn btn-success w-100">
+              计算总营养
+            </button>
+          </div>
+        </form>
+        <div class="table-responsive mt-4">
+          <table class="table table-sm table-bordered" id="tb-ingredients">
+            <thead class="table-light">
+              <tr><th>食材</th><th>重量 (g)</th><th>操作</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 总营养成分 -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-white">
+        <h4 class="mb-0">总营养成分</h4>
+      </div>
+      <div class="card-body">
+        <!-- 四大关键指标 -->
+        <div class="row g-3 mb-3" id="summary-metrics"></div>
+        <div class="text-center mb-3">
+          <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#more-nutrients">
+            <i class="fas fa-chevron-down"></i> 查看更多营养素
+          </button>
+        </div>
+        <div class="collapse" id="more-nutrients">
+          <div class="row">
+            <div class="col-md-6">
+              <ul class="list-group" id="nutrients-list-left"></ul>
+            </div>
+            <div class="col-md-6">
+              <ul class="list-group" id="nutrients-list-right"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 已保存菜谱 -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-white">
+        <h4 class="mb-0">已保存菜谱</h4>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive" style="max-height: 400px; overflow: auto;">
+          <table class="table table-sm table-hover mb-0" id="tb-recipes">
+            <thead class="table-light">
+              <tr>
+                <th>菜名</th>
+                <th>配料列表</th>
+                <!-- JS 动态插入营养项表头 -->
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='vendor/bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
